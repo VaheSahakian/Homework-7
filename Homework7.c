@@ -4,12 +4,17 @@ struct Process {
     int pid, at, bt, wt, tat, rt;
 };
 
-void swap(struct Process *a, struct Process *b){ struct Process t=*a; *a=*b; *b=t; }
+void swap(struct Process *a, struct Process *b){
+       struct Process t=*a; *a=*b; *b=t; 
+}
 void sort_by_arrival(struct Process p[], int n){
-    for(int i=0;i<n-1;i++)
-        for(int j=0;j<n-1-i;j++)
-            if(p[j].at > p[j+1].at || (p[j].at == p[j+1].at && p[j].pid > p[j+1].pid))
+    for(int i=0;i<n-1;i++){
+        for(int j=0;j<n-1-i;j++){
+            if(p[j].at > p[j+1].at || (p[j].at == p[j+1].at && p[j].pid > p[j+1].pid)){
                 swap(&p[j], &p[j+1]);
+	    }
+	}
+    }
 }
 
 void fcfs(struct Process p[], int n) {
@@ -19,7 +24,9 @@ void fcfs(struct Process p[], int n) {
     printf("\n=== First Come First Served (FCFS) ===\n");
     printf("Gantt Chart: ");
     for (int i =0; i < n; i++) {
-        if (time < p[i].at) time = p[i].at;
+        if (time < p[i].at) {
+		time = p[i].at;
+	}
         p[i].wt = time - p[i].at;
         p[i].rt = p[i].wt;
         p[i].tat =p[i].wt + p[i].bt;
@@ -30,8 +37,7 @@ void fcfs(struct Process p[], int n) {
     printf("PID\tAT\tBT\tWT\tTAT\tRT\n");
     float awt =0, atat =0, art =0;
     for (int i = 0; i < n; i++) {
-        printf("%d\t%d\t%d\t%d\t%d\t%d\n",
-               p[i].pid, p[i].at, p[i].bt, p[i].wt, p[i].tat, p[i].rt);
+        printf("%d\t%d\t%d\t%d\t%d\t%d\n",p[i].pid, p[i].at, p[i].bt, p[i].wt, p[i].tat, p[i].rt);
         awt += p[i].wt; atat += p[i].tat; art += p[i].rt;
     }
     printf("\nAverage Waiting Time: %.2f\n", awt / n);
@@ -40,13 +46,20 @@ void fcfs(struct Process p[], int n) {
 }
 
 void sjf(struct Process p[], int n) {
-    int done[n]; for(int i=0;i<n;i++) done[i]=0;
+    int done[n];
+    for(int i=0;i<n;i++){
+	    done[i]=0;
+    }
     struct Process out[n];
 
     sort_by_arrival(p,n);
 
     int time = p[0].at;
-    for (int i=1;i<n;i++) if(p[i].at < time) time= p[i].at;
+    for (int i=1;i<n;i++){
+	    if(p[i].at < time){
+		   time= p[i].at;
+	    }
+    }
 
     int completed = 0;
     printf("\n=== Shortest Job First (SJF) ===\n");
@@ -55,13 +68,23 @@ void sjf(struct Process p[], int n) {
     while (completed<n) {
         int idx = -1;
         for (int i = 0; i <n; i++) {
-            if (done[i] || p[i].at > time) continue;
-            if (idx == -1) idx = i;
+            if (done[i] || p[i].at > time){ 
+		   continue;
+	    }
+            if (idx == -1){
+		   idx = i;
+	    }
             else {
-                if (p[i].bt < p[idx].bt) idx = i;
+                if (p[i].bt < p[idx].bt){
+			idx = i;
+		}
                 else if (p[i].bt ==p[idx].bt) {
-                    if (p[i].at < p[idx].at) idx = i;
-                    else if (p[i].at==p[idx].at && p[i].pid < p[idx].pid) idx = i;
+                    if (p[i].at < p[idx].at){
+			    idx = i;
+		    }
+                    else if (p[i].at==p[idx].at && p[i].pid < p[idx].pid){
+			    idx = i;
+		    }
                 }
             }
         }
